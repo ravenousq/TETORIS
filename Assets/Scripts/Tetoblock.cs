@@ -9,8 +9,7 @@ public class Tetoblock : MonoBehaviour
     [SerializeField] private float blockRegularFallingSpeed = 2;
     [SerializeField] private float blockHasteFallingSpeed = 4;
     [SerializeField] private float blockFlashFallingSpeed;
-    [SerializeField] private GameObject spriteParent;
-    private SpriteRenderer[] sprites;
+    [SerializeField] private Sprite[] sprites;
     private float blockFallingSpeed;
     private Vector3 movementDirection = Vector3.down;
     private bool isMoving = true;
@@ -24,15 +23,12 @@ public class Tetoblock : MonoBehaviour
 
     void Start()
     {
-        sprites = spriteParent.GetComponentsInChildren<SpriteRenderer>();
-
         blockFallingSpeed = blockRegularFallingSpeed;
 
         int randomSprite = Random.Range(0, sprites.Length);
 
         foreach(Tetosquare tetosquare in squares)
-            tetosquare.SetSprite(sprites[randomSprite].sprite);
-
+            tetosquare.SetSprite(sprites[randomSprite]);
     }
 
     void Update()
