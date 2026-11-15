@@ -12,7 +12,7 @@ public class Tetoblock : MonoBehaviour
     [SerializeField] private Sprite[] sprites;
     private float blockFallingSpeed;
     private Vector3 movementDirection = Vector3.down;
-    private bool isMoving = true;
+    public bool isMoving {get; private set;} = true;
     [SerializeField] private float blockSize = .7f;
     private List<Tetosquare> squares = new List<Tetosquare>();
 
@@ -33,6 +33,12 @@ public class Tetoblock : MonoBehaviour
 
     void Update()
     {
+        if(!isMoving)
+            return;
+
+        if(Input.GetKeyDown(KeyCode.X))
+            StopMoving();
+
         if(Input.GetKeyDown(KeyCode.Q))
             RotateBlock();
         else if (Input.GetKeyDown(KeyCode.E))
@@ -53,14 +59,15 @@ public class Tetoblock : MonoBehaviour
         movementIndex = clockwise ? (3 + movementIndex) % 4 : (5 + movementIndex) % 4;
         movementDirection = possibleMovement[movementIndex];
 
+        //transform.Translate(-movementDirection * blockSize);
+
         foreach(Tetosquare square in squares)
             square.RotateSquare(clockwise);
     }
 
     private void MoveBlock()
     {
-        if(isMoving)
-            transform.Translate(movementDirection * blockFallingSpeed * Time.deltaTime);
+        transform.Translate(movementDirection * blockFallingSpeed * Time.deltaTime);
 
         if(Input.GetKeyDown(KeyCode.A))
             transform.Translate(possibleMovement[(3 + movementIndex) % 4 ] * blockSize);
@@ -69,7 +76,14 @@ public class Tetoblock : MonoBehaviour
             transform.Translate(possibleMovement[(5 + movementIndex) % 4 ] * blockSize);
     }
 
-    private void OecameInvisible()
+    public void StopMoving()
+    {
+        isMoving = false;
+
+        TestSpawner.instance.SpawnTetoblock();
+    }
+
+    private void OnBecameInvisible()
     {
         Destroy(gameObject);
     }
