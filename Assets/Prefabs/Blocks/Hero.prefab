@@ -155,9 +155,9 @@ MonoBehaviour:
   - {x: 1, y: 0, z: 0}
   - {x: 0, y: 1, z: 0}
   - {x: -1, y: 0, z: 0}
-  blockRegularFallingSpeed: 2
-  blockHasteFallingSpeed: 4
-  blockFlashFallingSpeed: 0
+  tetoblockRegularFallingSpeed: 2
+  tetoblockHasteFallingSpeed: 4
+  tetoblockFlashFallingSpeed: 0
   sprites:
   - {fileID: 21300000, guid: 4646eaa4198ebc64a940f7c78610da8d, type: 3}
   - {fileID: 21300000, guid: a32c06fbb46ea2a4d8ee45f713b4d156, type: 3}
@@ -166,7 +166,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a88e7f5e79e576545bbba1e1ae4d6039, type: 3}
   - {fileID: 21300000, guid: a5066dd08ec93684b9e28ed7eca6d77e, type: 3}
   - {fileID: 21300000, guid: ce1c090a8ccdcc1408281f3951d2ab2c, type: 3}
-  blockSize: 0.5
+  tetoblockType: 4
+  tetoblockSize: 0.7
 --- !u!1 &4155156264209356968
 GameObject:
   m_ObjectHideFlags: 0

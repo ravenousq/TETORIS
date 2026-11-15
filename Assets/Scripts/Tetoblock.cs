@@ -2,33 +2,32 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+public enum tetoblockEnum {OrangeRicky, BlueRicky, ClevelandZ,RhodeIslandZ,Hero,Teewee, Smashboy}
+
 public class Tetoblock : MonoBehaviour
 {
     [SerializeField] private Vector3[] possibleMovement;
     private int movementIndex = 0;
-    [SerializeField] private float blockRegularFallingSpeed = 2;
-    [SerializeField] private float blockHasteFallingSpeed = 4;
-    [SerializeField] private float blockFlashFallingSpeed;
+    [SerializeField] private float tetoblockRegularFallingSpeed = 2;
+    [SerializeField] private float tetoblockHasteFallingSpeed = 4;
+    [SerializeField] private float tetoblockFlashFallingSpeed;
     [SerializeField] private Sprite[] sprites;
-    private float blockFallingSpeed;
+    //[SerializeField] private tetoblockEnum tetoblockType;
+    private float tetoblockFallingSpeed;
     private Vector3 movementDirection = Vector3.down;
     public bool isMoving {get; private set;} = true;
-    [SerializeField] private float blockSize = .7f;
-    private List<Tetosquare> squares = new List<Tetosquare>();
+    [SerializeField] private float tetoblockSize = .7f;
+    public Tetosquare[] tetosquares {get; private set;} = new Tetosquare[4];
 
     private void Awake()
     {
-        squares = GetComponentsInChildren<Tetosquare>().ToList();
+        tetosquares = GetComponentsInChildren<Tetosquare>().ToArray();
     }
 
     void Start()
     {
-        blockFallingSpeed = blockRegularFallingSpeed;
-
-        int randomSprite = Random.Range(0, sprites.Length);
-
-        foreach(Tetosquare tetosquare in squares)
-            tetosquare.SetSprite(sprites[randomSprite]);
+        tetoblockFallingSpeed = tetoblockRegularFallingSpeed;
     }
 
     void Update()
@@ -36,55 +35,161 @@ public class Tetoblock : MonoBehaviour
         if(!isMoving)
             return;
 
-        if(Input.GetKeyDown(KeyCode.X))
-            StopMoving();
-
         if(Input.GetKeyDown(KeyCode.Q))
-            RotateBlock();
+            Tracker.instance.RequestRotation(true);
         else if (Input.GetKeyDown(KeyCode.E))
-            RotateBlock(false);
+            Tracker.instance.RequestRotation(false);
 
         if(Input.GetKeyDown(KeyCode.S))
-            blockFallingSpeed = blockHasteFallingSpeed;
+            tetoblockFallingSpeed = tetoblockHasteFallingSpeed;
         else if(Input.GetKeyUp(KeyCode.S))
-            blockFallingSpeed = blockRegularFallingSpeed;
+            tetoblockFallingSpeed = tetoblockRegularFallingSpeed;
 
         MoveBlock();
     }
 
-    private void RotateBlock(bool clockwise = true)
+    public void Rotate(bool clockwise = true)
     {
         transform.Rotate(0, 0, clockwise ? 90 : -90);
 
         movementIndex = clockwise ? (3 + movementIndex) % 4 : (5 + movementIndex) % 4;
         movementDirection = possibleMovement[movementIndex];
 
-        //transform.Translate(-movementDirection * blockSize);
-
-        foreach(Tetosquare square in squares)
-            square.RotateSquare(clockwise);
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.RotateSquare(clockwise);
     }
 
     private void MoveBlock()
     {
-        transform.Translate(movementDirection * blockFallingSpeed * Time.deltaTime);
+        transform.Translate(movementDirection * tetoblockFallingSpeed * Time.deltaTime);
 
-        if(Input.GetKeyDown(KeyCode.A))
-            transform.Translate(possibleMovement[(3 + movementIndex) % 4 ] * blockSize);
-
-        if(Input.GetKeyDown(KeyCode.D))
-            transform.Translate(possibleMovement[(5 + movementIndex) % 4 ] * blockSize);
+        CheckMovement();
     }
+
+    private void CheckMovement()
+    {
+        if (Input.GetKeyDown(KeyCode.D)) 
+            Tracker.instance.RequestMovement();
+        else if(Input.GetKeyDown(KeyCode.A))
+            Tracker.instance.RequestMovement(false);
+        
+    }
+
+    public void Move(bool right = true)
+    {
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.horizontal += right ? 1 : -1;
+
+        transform.Translate(possibleMovement[((right ? 5 : 3) + movementIndex) % 4] * tetoblockSize);
+    }
+
 
     public void StopMoving()
     {
         isMoving = false;
 
-        TestSpawner.instance.SpawnTetoblock();
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.SnapToPosition();
     }
 
     private void OnBecameInvisible()
     {
         Destroy(gameObject);
     }
+
+    public void Initialize(tetoblockEnum tetoblockType, int spriteIndex)
+    {
+        //this.tetoblockType = tetoblockType;
+
+        AssignEnum(tetoblockType);
+
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.SetSprite(sprites[spriteIndex]);
+    }
+
+    private void AssignEnum(tetoblockEnum tetoblock)
+    {
+        switch (tetoblock)
+        {
+            case tetoblockEnum.OrangeRicky:
+            OrangeRicky();
+            break;
+            case tetoblockEnum.BlueRicky:
+            BlueRicky();
+            break;
+            case tetoblockEnum.ClevelandZ:
+            ClevelandZ();
+            break;
+            case tetoblockEnum.RhodeIslandZ:
+            RhodeIslandZ();
+            break;
+            case tetoblockEnum.Hero:
+            Hero();
+            break;
+            case tetoblockEnum.Teewee:
+            Teewee();
+            break;
+            default:
+            Smashboy();
+            break;
+        }
+    }
+
+    private void OrangeRicky()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(-.5f, 0f);
+        tetosquares[2].transform.localPosition = new Vector3(.5f, 0f);
+        tetosquares[3].transform.localPosition = new Vector3(.5f, .5f);
+    }
+
+    private void BlueRicky()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(-.5f, 0f);
+        tetosquares[2].transform.localPosition = new Vector3(-.5f, .5f);
+        tetosquares[3].transform.localPosition = new Vector3(.5f, 0f);
+    }
+
+    private void ClevelandZ()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(-.5f, .5f);
+        tetosquares[2].transform.localPosition = new Vector3(0f, .5f);
+        tetosquares[3].transform.localPosition = new Vector3(.5f, 0f);
+    }
+
+    private void RhodeIslandZ()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(-.5f, 0f);
+        tetosquares[2].transform.localPosition = new Vector3(0f, .5f);
+        tetosquares[3].transform.localPosition = new Vector3(.5f, .5f);
+    }
+
+    private void Hero()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(-.5f, 0f);
+        tetosquares[2].transform.localPosition = new Vector3(.5f, 0f);
+        tetosquares[3].transform.localPosition = new Vector3(1f, 0f);
+    }
+
+    private void Teewee()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(.5f, 0f);
+        tetosquares[2].transform.localPosition = new Vector3(-.5f, 0f);
+        tetosquares[3].transform.localPosition = new Vector3(0f, .5f);
+    }
+
+    private void Smashboy()
+    {
+        tetosquares[0].transform.localPosition = new Vector3(0f, 0f);
+        tetosquares[1].transform.localPosition = new Vector3(0f, .5f);
+        tetosquares[2].transform.localPosition = new Vector3(.5f, .5f);
+        tetosquares[3].transform.localPosition = new Vector3(.5f, 0f);
+    }
+
+    public Sprite[] GetTetosprites() => sprites;
 }
