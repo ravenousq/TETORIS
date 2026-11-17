@@ -63,6 +63,7 @@ public class Tracker : MonoBehaviour
    void Start()
    {  
       currentTetoblock = SpawnTetoblock(tetoblockStartingCords).GetComponent<Tetoblock>();
+      AudioManager.instance.PlayBGM(0, true);
    }
 
    void Update()
