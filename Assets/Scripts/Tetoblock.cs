@@ -11,7 +11,6 @@ public class Tetoblock : MonoBehaviour
     private int movementIndex = 0;
     [SerializeField] private float tetoblockRegularFallingSpeed = 2;
     [SerializeField] private float tetoblockHasteFallingSpeed = 4;
-    [SerializeField] private float tetoblockFlashFallingSpeed;
     [SerializeField] private Sprite[] sprites;
     //[SerializeField] private tetoblockEnum tetoblockType;
     private float tetoblockFallingSpeed;
@@ -50,13 +49,13 @@ public class Tetoblock : MonoBehaviour
 
     public void Rotate(bool clockwise = true, bool validationNotPassed = false)
     {
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.RotateSquare(clockwise);
+
         transform.Rotate(0, 0, clockwise ? 90 : -90);
 
         movementIndex = clockwise ? (3 + movementIndex) % 4 : (5 + movementIndex) % 4;
         movementDirection = possibleMovement[movementIndex];
-
-        foreach(Tetosquare tetosquare in tetosquares)
-            tetosquare.RotateSquare(clockwise);
 
         UpdateTetosquareCords(); // <- ISSUE HERE EDGES
 

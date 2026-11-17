@@ -9,7 +9,6 @@ public class Tetosquare : MonoBehaviour
 
     public int vertical = 0;
     public int horizontal;
-    public float[] cords = new float[2];
 
     void Awake() => sr = GetComponent<SpriteRenderer>();
 
@@ -46,10 +45,6 @@ public class Tetosquare : MonoBehaviour
         vertical = bestIndex;
     }
 
-    void Update()
-    {
-    
-    }
 
     public void DestroyMe()
     {
@@ -66,7 +61,6 @@ public class Tetosquare : MonoBehaviour
     {
         UpdateHorizontal();
         UpdateVertical();
-        //Debug.Log(gameObject.name + " -> x:" + horizontal + "; y: " + vertical);
     }
 
     public void SetSprite(Sprite sprite) => sr.sprite = sprite;

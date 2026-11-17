@@ -16,9 +16,7 @@ public class Tracker : MonoBehaviour
    private Tetoblock currentTetoblock;
    public float[] verticals {get; private set;} = new float[20];
    public float[] horizontals {get; private set;} = new float[20];
-
    private float[] tetoblockCordContainer = new float[8];
-   [SerializeField] private bool debugMode;
 
    void Awake()
    {
@@ -72,7 +70,6 @@ public class Tracker : MonoBehaviour
    {
       TrackCurrentTetoblock();
    }
-
 
    private void TrackCurrentTetoblock()
    {
@@ -134,35 +131,55 @@ public class Tracker : MonoBehaviour
 
    public void RequestRotation(bool clockwise = true)
    {
-      for(int i = 0; i < 4; i++)
-      {
-         tetoblockCordContainer[2 * i] = currentTetoblock.tetosquares[i].horizontal;
-         tetoblockCordContainer[2 * i + 1] = currentTetoblock.tetosquares[i].vertical;
-      }
+      SaveValidationCords();
 
       currentTetoblock.Rotate(clockwise);
    }
 
-   public void ValidateRotation(bool clockwise = true)
+   private void SaveValidationCords()
    {
-      bool validateRotation = true;
-      List<float[,]> tetosquaresCords = new List<float[,]>();
-      foreach(Tetosquare tetosquare in currentTetoblock.tetosquares)
+      for (int i = 0; i < 4; i++)
       {
-         if(!tetosquaresCords.Contains(new float[tetosquare.horizontal, tetosquare.vertical]))
-            tetosquaresCords.Add(new float[tetosquare.horizontal, tetosquare.vertical]);
-         else
+         tetoblockCordContainer[2 * i] = currentTetoblock.tetosquares[i].horizontal;
+         tetoblockCordContainer[2 * i + 1] = currentTetoblock.tetosquares[i].vertical;
+      }
+   }
+
+    public void ValidateRotation(bool clockwise = true)
+   {
+
+      bool validateRotation = true;
+
+      for(int i = 0; i < 4; i++)
+      {
+         // if(!tetosquaresCords.Contains(new float[tetosquare.horizontal, tetosquare.vertical]))
+         //    tetosquaresCords.Add(new float[tetosquare.horizontal, tetosquare.vertical]);
+         // else
+         // {
+         //    validateRotation = false;
+         //    break;
+         // }
+         Tetosquare tetosquare = currentTetoblock.tetosquares[i];
+            
+         for(int j = i + 1; j < 4; j++)
+         {
+            if((tetosquare.horizontal == currentTetoblock.tetosquares[j].horizontal)
+            && (tetosquare.vertical == currentTetoblock.tetosquares[j].vertical))
+            {
+               validateRotation = false;
+               break;
+            }
+         }
+
+         if(!validateRotation)
+            break;
+
+         if(board[tetosquare.vertical, tetosquare.horizontal])
          {
             validateRotation = false;
             break;
          }
-         if(tetosquare.horizontal < 0 || tetosquare.horizontal > 9
-         || tetosquare.vertical < 0 || tetosquare.vertical > 19
-         || board[tetosquare.vertical, tetosquare.horizontal] ) // <- ISSUE HERE
-         {
-            validateRotation = false;
-            break;
-         }
+         
       }
 
       if(validateRotation)
