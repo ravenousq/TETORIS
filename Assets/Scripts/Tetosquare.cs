@@ -60,8 +60,13 @@ public class Tetosquare : MonoBehaviour
     public void RotateSquare(bool clockwise = true)
     {
         sr.transform.Rotate(new Vector3(0,0,clockwise ? -90 : 90));
+    }
+
+    public void UpdateCords()
+    {
         UpdateHorizontal();
         UpdateVertical();
+        //Debug.Log(gameObject.name + " -> x:" + horizontal + "; y: " + vertical);
     }
 
     public void SetSprite(Sprite sprite) => sr.sprite = sprite;

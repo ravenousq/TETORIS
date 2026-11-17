@@ -48,7 +48,7 @@ public class Tetoblock : MonoBehaviour
         MoveBlock();
     }
 
-    public void Rotate(bool clockwise = true)
+    public void Rotate(bool clockwise = true, bool validationNotPassed = false)
     {
         transform.Rotate(0, 0, clockwise ? 90 : -90);
 
@@ -57,6 +57,11 @@ public class Tetoblock : MonoBehaviour
 
         foreach(Tetosquare tetosquare in tetosquares)
             tetosquare.RotateSquare(clockwise);
+
+        UpdateTetosquareCords(); // <- ISSUE HERE EDGES
+
+        if(!validationNotPassed)
+            Tracker.instance.ValidateRotation(clockwise);
     }
 
     private void MoveBlock()
@@ -90,6 +95,12 @@ public class Tetoblock : MonoBehaviour
 
         foreach(Tetosquare tetosquare in tetosquares)
             tetosquare.SnapToPosition();
+    }
+
+    public void UpdateTetosquareCords()
+    {
+        foreach(Tetosquare tetosquare in tetosquares)
+            tetosquare.UpdateCords();
     }
 
     private void OnBecameInvisible()
