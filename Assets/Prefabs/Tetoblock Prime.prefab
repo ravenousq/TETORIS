@@ -57,13 +57,13 @@ MonoBehaviour:
   tetoblockHasteFallingSpeed: 6
   tetoblockFlashFallingSpeed: 0
   sprites:
-  - {fileID: 21300000, guid: 4646eaa4198ebc64a940f7c78610da8d, type: 3}
-  - {fileID: 21300000, guid: a32c06fbb46ea2a4d8ee45f713b4d156, type: 3}
-  - {fileID: 21300000, guid: 9ec585bbe14be20449f9ba7c59e225e9, type: 3}
-  - {fileID: 21300000, guid: 5f28955d3d6d281428cca8c960747932, type: 3}
-  - {fileID: 21300000, guid: a88e7f5e79e576545bbba1e1ae4d6039, type: 3}
-  - {fileID: 21300000, guid: a5066dd08ec93684b9e28ed7eca6d77e, type: 3}
-  - {fileID: 21300000, guid: ce1c090a8ccdcc1408281f3951d2ab2c, type: 3}
+  - {fileID: 21300000, guid: a42a10baa0453d64bb7352765fddd178, type: 3}
+  - {fileID: 21300000, guid: 233a79083b88c9848acf741fd5079464, type: 3}
+  - {fileID: 21300000, guid: 4227d8e52dd530b4ca2ae5d09d01b394, type: 3}
+  - {fileID: 21300000, guid: eb92298c3999a434885c58ef5e51100e, type: 3}
+  - {fileID: 21300000, guid: 6127a87028a902a4bb944a7271c7efe0, type: 3}
+  - {fileID: 21300000, guid: 781dfac5bc21d32408bf5be558cae422, type: 3}
+  - {fileID: 21300000, guid: bf8d543117abe404390d275e24cfc6f5, type: 3}
   tetoblockSize: 0.5
 --- !u!1001 &433082202964100284
 PrefabInstance:
