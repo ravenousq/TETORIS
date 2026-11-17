@@ -69,4 +69,16 @@ public class Tetosquare : MonoBehaviour
     {
         transform.position = new Vector3 (Tracker.instance.horizontals[horizontal], Tracker.instance.verticals[vertical]);
     }
+
+    private void SetNewCords(int vertical, int horizontal)
+    {
+        this.vertical = vertical;
+        this.horizontal = horizontal;
+    }
+
+    public void MoveTo(int vertical, int horizontal)
+    {
+        SetNewCords(vertical, horizontal);
+        SnapToPosition();
+    }
 }
