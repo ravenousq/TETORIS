@@ -13,12 +13,15 @@ public class Tracker : MonoBehaviour
    [SerializeField] private Transform tetosquarespot;
    [SerializeField] private GameObject testBlock;
    [SerializeField] private Transform tetoblockStartingCords;
+   public float peak {get; private set;} = 19;
    private List<Tetosquare> tetosquares = new List<Tetosquare>();
    private Transform[] tetosquareSpots;
    private Tetoblock currentTetoblock;
    public float[] verticals {get; private set;} = new float[20];
    public float[] horizontals {get; private set;} = new float[10];
    private float[] tetoblockCordContainer = new float[8];
+   private int tetorisCombo;
+   private int lastTetorisCounter = 0;
 
    void Awake()
    {
@@ -64,6 +67,7 @@ public class Tracker : MonoBehaviour
    {  
       currentTetoblock = SpawnTetoblock(tetoblockStartingCords).GetComponent<Tetoblock>();
       AudioManager.instance.PlayBGM(0, true);
+      AudioManager.instance.PlaySpecialSFX(2);
    }
 
    void Update()
@@ -72,6 +76,7 @@ public class Tracker : MonoBehaviour
 
       if(Input.GetKeyDown(KeyCode.G))
          PrintBoard();
+         
    }
 
    private void TrackCurrentTetoblock()
@@ -99,19 +104,25 @@ public class Tracker : MonoBehaviour
    {
       FillBoard();
       currentTetoblock.StopMoving();
-      
 
       List<float> verticalsToDestroy = CheckRows();
 
+      tetorisCombo = verticalsToDestroy.Count;
+
+      if(tetorisCombo < 4 && tetorisCombo > 0)
+         Tetobrain.instance.TetoSpeak(Tetomood.Happy, true);
+      else if(tetorisCombo == 4)
+         AudioManager.instance.PlaySpecialSFX(0);
+
+
       if(verticalsToDestroy.Any())
       {
+         lastTetorisCounter = 0;
          currentTetoblock = SpawnTetoblock(tetoblockStartingCords).GetComponent<Tetoblock>();
          for(int i = tetosquares.Count - 1; i >= 0; i--)
          {
             Tetosquare tetosquare = tetosquares[i];
 
-            //Debug.Log($"Match -> {tetosquare.vertical} {verticalsToDestroy.Contains(tetosquare.vertical)}");
-      
             if(verticalsToDestroy.Contains(tetosquare.vertical))
                DestroyTetosquare(tetosquare);
          }
@@ -119,7 +130,16 @@ public class Tracker : MonoBehaviour
          CleanUpRows();
       }
       else
-         currentTetoblock = SpawnTetoblock(tetoblockStartingCords).GetComponent<Tetoblock>();
+        currentTetoblock = SpawnTetoblock(tetoblockStartingCords).GetComponent<Tetoblock>();
+
+      tetorisCombo = 0;
+      lastTetorisCounter++;
+
+      if(peak < 6 && UnityEngine.Random.Range(0, 100) > 85)
+         Tetobrain.instance.TetoSpeak(Tetomood.Scared);
+
+      if(lastTetorisCounter > 10 && UnityEngine.Random.Range(0, 100) > 95)
+         Tetobrain.instance.TetoSpeak(Tetomood.Angry);
    }
 
    private List<Tetosquare> VerticalEmpty(float vertical)
@@ -146,15 +166,20 @@ public class Tracker : MonoBehaviour
       }
       
       bool flag = true;
+      //bool nomFlag = false;
       for(int i = (int)bottom - 1; i >= 0; i--)
       {
          foreach(Tetosquare tetosquare in VerticalEmpty(i))
          {
+            if(tetosquare.horizontal == peak)
+               peak++;
+
             board[tetosquare.vertical, tetosquare.horizontal] = null;
             tetosquare.MoveTo(tetosquare.vertical + 1, tetosquare.horizontal);
             board[tetosquare.vertical, tetosquare.horizontal] = tetosquare;
             flag = false;
          }
+
       }
 
       if(!flag)
@@ -219,7 +244,12 @@ public class Tracker : MonoBehaviour
    private void FillBoard()
    {
       foreach (Tetosquare tetosquare in currentTetoblock.tetosquares)
+      {
          board[tetosquare.vertical, tetosquare.horizontal] = tetosquare;
+         
+         if(tetosquare.vertical < peak)
+            peak = tetosquare.vertical;
+      }
    }
 
    public void RequestMovement(bool right = true)
@@ -255,30 +285,23 @@ public class Tracker : MonoBehaviour
       }
    }
 
-    public void ValidateRotation(bool clockwise = true)
+   public void ValidateRotation(bool clockwise = true)
    {
 
       bool validateRotation = true;
 
       for(int i = 0; i < 4; i++)
       {
-         // if(!tetosquaresCords.Contains(new float[tetosquare.horizontal, tetosquare.vertical]))
-         //    tetosquaresCords.Add(new float[tetosquare.horizontal, tetosquare.vertical]);
-         // else
-         // {
-         //    validateRotation = false;
-         //    break;
-         // }
          Tetosquare tetosquare = currentTetoblock.tetosquares[i];
             
          for(int j = i + 1; j < 4; j++)
          {
             if((tetosquare.horizontal == currentTetoblock.tetosquares[j].horizontal)
             && (tetosquare.vertical == currentTetoblock.tetosquares[j].vertical))
-            {
-               validateRotation = false;
-               break;
-            }
+         {
+            validateRotation = false;
+            break;
+         }
          }
 
          if(!validateRotation)

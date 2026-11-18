@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -13,18 +14,16 @@ public class AudioManager : MonoBehaviour
         }
         else
             Destroy(gameObject);
-
-        //sfx = GetComponentsInChildren<AudioSource>().Where(c => c.name.Contains("sfx")).ToArray();
     }
-
 
     [SerializeField] private AudioSource[] bgm;
     [SerializeField] private AudioSource[] sfx;
+    [SerializeField] private AudioSource[] specialSFX;
     private int bgmIndex;
 
     public void PlaySFX(int sfxToPlay, bool interupt = false)
     {
-        if(sfxToPlay > sfx.Length)
+        if(sfxToPlay >= sfx.Length)
             return;
 
         if(interupt)
@@ -46,6 +45,23 @@ public class AudioManager : MonoBehaviour
 
         bgm[bgmIndex].loop = loop;
         bgm[bgmIndex].Play();
+    }
+
+    public void PlaySpecialSFX(int specialSFX)
+    {
+        for(int i = 0; i < sfx.Length; i++)
+            StopSFX(i);
+
+        this.specialSFX[specialSFX].Play();
+    }
+
+    public bool isPlayingSFX()
+    {
+        for(int i = 0; i < sfx.Length; i++)
+            if(sfx[i].isPlaying)
+                return true;
+        
+        return false;
     }
 
     public void StopSFX(int sfxToStop) => sfx[sfxToStop].Stop();
